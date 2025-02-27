@@ -1,0 +1,10 @@
+{
+  "Name": "BlinkFix",
+  "Author": "AlanBF",
+  "Version": "1.0.0",
+  "Description": "Changes the blinking animation and fix the eye color changing when blinking",
+  "UniqueID": "AlanBF.EyesFix",
+  "EntryDll": "BlinkFix.dll",
+  "MinimumApiVersion": "4.1.10",
+  "UpdateKeys": []
+}

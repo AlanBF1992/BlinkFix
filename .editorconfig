@@ -1,0 +1,10 @@
+﻿[*.cs]
+
+# S125: Sections of code should not be commented out
+dotnet_diagnostic.S125.severity = none
+
+# IDE1006: Naming Styles
+dotnet_diagnostic.IDE1006.severity = none
+
+# RCS1123: Add parentheses when necessary
+dotnet_diagnostic.RCS1123.severity = none
