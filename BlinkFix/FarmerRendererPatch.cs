@@ -115,47 +115,62 @@ namespace BlinkFix
 
         internal static void drawGeneral(SpriteBatch b, Texture2D baseTexture, Vector2 position, int facingDirection, Farmer who, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth1, float layerDepth2)
         {
+            bool lookingDown = facingDirection == 2;
+            bool lookingLeft = facingDirection == 3;
+
+            int currentEyes = who.currentEyes;
+
             //If this is used someday
-            if(who.currentEyes != 1 && who.currentEyes != 4)
+            if (currentEyes != 1 && currentEyes != 4)
             {
                 var positionDif = new Vector2(0, ((who.FacingDirection == 1 || who.FacingDirection == 3) ? 40 : 44) - ((who.IsMale && who.FacingDirection != 2) ? 36 : 40));
 
-                b.Draw(baseTexture, position, new Rectangle(5, 16, (facingDirection == 2) ? 6 : 2, 2), color, rotation, origin, scale, effects, layerDepth1);
-                b.Draw(baseTexture, position + positionDif, new Rectangle(264 + ((facingDirection == 3) ? 4 : 0), 2 + (who.currentEyes - 1) * 2, (facingDirection == 2) ? 6 : 2, 2), color, rotation, origin, scale, effects, layerDepth2);
+                b.Draw(baseTexture, position, new Rectangle(5, 16, lookingDown ? 6 : 2, 2), color, rotation, origin, scale, effects, layerDepth1);
+                b.Draw(baseTexture, position + positionDif, new Rectangle(264 + (lookingLeft ? 4 : 0), 2 + (currentEyes - 1) * 2, lookingDown ? 6 : 2, 2), color, rotation, origin, scale, effects, layerDepth2);
                 return;
             }
             if (who.IsMale) {
-                var portraitOffset = new Vector2(0, (who.FacingDirection != 2 && facingDirection == 2) ? 0 : 4);
-                var currentOffset = new Vector2(0, (-4 * who.currentEyes + 28) / 3); //f(4) = 8, f(1) = 4
-                var leftLookOffset = new Vector2(facingDirection == 3? 0 : 4, 0);
+                var portraitOffset = position - new Vector2(0, (who.FacingDirection != 2 && lookingDown) ? 0 : 4);
+                var currentOffset = new Vector2(0, (-4 * currentEyes + 28) / 3); //f(4) = 8, f(1) = 4
+                var leftLookOffset = new Vector2(lookingLeft ? 0 : 4, 0);
 
-                //Eyebrow
-                b.Draw(baseTexture, position - portraitOffset - leftLookOffset, new Rectangle(4, 9, facingDirection == 2 ? 8 : 3, 1), color, rotation, origin, scale, effects, layerDepth1);
-                b.Draw(baseTexture, position - portraitOffset, new Rectangle(5, 15, facingDirection == 2 ? 6 : 2, 1), color, rotation, origin, scale, effects, layerDepth2);
-                //Eyelid
-                b.Draw(baseTexture, position - portraitOffset - leftLookOffset + new Vector2(0, 4), new Rectangle(4 + (facingDirection == 3 ? 5 : 0), 16, facingDirection == 2 ? 8 : 3, 1), color, rotation, origin, scale, effects, layerDepth1);
-                //Eyelashes
-                if (who.currentEyes == 4)
+                if(!who.UsingTool || (who.UsingTool && !lookingDown))
                 {
-                    b.Draw(baseTexture, position + currentOffset - portraitOffset - leftLookOffset, new Rectangle(4, 10, (facingDirection == 2 ? 8 : 3), 1), color, rotation, origin, scale, effects, layerDepth2);
+                    //Eyebrow
+                    b.Draw(baseTexture, portraitOffset - leftLookOffset, new Rectangle(4, 9, lookingDown ? 8 : 3, 1), color, rotation, origin, scale, effects, layerDepth1);
+                    b.Draw(baseTexture, portraitOffset, new Rectangle(5, 15, lookingDown ? 6 : 2, 1), color, rotation, origin, scale, effects, layerDepth2);
                 }
-                if (who.currentEyes == 1)
+                //Eyelid
+                b.Draw(baseTexture, portraitOffset - leftLookOffset + new Vector2(0, 4), new Rectangle(4 + (lookingLeft ? 5 : 0), 16, lookingDown ? 8 : 3, 1), color, rotation, origin, scale, effects, layerDepth1);
+                //Eyelashes
+                if (currentEyes == 4)
                 {
-                    b.Draw(baseTexture, position + currentOffset - portraitOffset, new Rectangle(5, 10, (facingDirection == 2 ? 6 : 2), 1), color, rotation, origin, scale, effects, layerDepth2);
+                    if (!who.UsingTool)
+                    {
+                        b.Draw(baseTexture, portraitOffset + currentOffset - leftLookOffset, new Rectangle(4, 10, (lookingDown ? 8 : 3), 1), color, rotation, origin, scale, effects, layerDepth2);
+                    } else
+                    {
+                        b.Draw(baseTexture, portraitOffset + currentOffset - leftLookOffset + new Vector2(lookingDown ? 4 : 0, 0), new Rectangle(lookingDown ? 5 : 4, 10, (lookingDown ? 6 : 3), 1), color, rotation, origin, scale, effects, layerDepth2);
+                    }
+                }
+                else if (currentEyes == 1)
+                {
+                    b.Draw(baseTexture, portraitOffset + currentOffset, new Rectangle(5, 10, (lookingDown ? 6 : 2), 1), color, rotation, origin, scale, effects, layerDepth2);
                 }
             }
             else
             {
-                var portraitOffset = new Vector2(0, facingDirection != 2 ? 4 : 0);
-                var currentOffset = new Vector2(0, (-4 * who.currentEyes + 28) / 3) ;
+                var portraitOffset = position - new Vector2(0, !lookingDown ? 4 : 0);
+                var currentOffset = new Vector2(0, (-4 * currentEyes + 28) / 3) ;
+
                 //Eyelashes
-                b.Draw(baseTexture, position + currentOffset - portraitOffset, new Rectangle(5, 11, facingDirection == 2 ? 6 : 2, 1), color, rotation, origin, scale, effects, layerDepth2);
+                b.Draw(baseTexture, portraitOffset + currentOffset, new Rectangle(5, 11, lookingDown ? 6 : 2, 1), color, rotation, origin, scale, effects, layerDepth2);
                 //Eyebrow
-                b.Draw(baseTexture, position - portraitOffset, new Rectangle(5, 16, facingDirection == 2 ? 6 : 2, 1), color, rotation, origin, scale, effects, layerDepth1);
+                b.Draw(baseTexture, portraitOffset, new Rectangle(5, 16, lookingDown ? 6 : 2, 1), color, rotation, origin, scale, effects, layerDepth1);
                 //Eyelid
-                if (who.currentEyes == 1)
+                if (currentEyes == 1)
                 {
-                    b.Draw(baseTexture, position - portraitOffset + new Vector2(0,4), new Rectangle(5, 17, facingDirection == 2 ? 6 : 2, 1), color, rotation, origin, scale, effects, layerDepth1);
+                    b.Draw(baseTexture, portraitOffset + new Vector2(0,4), new Rectangle(5, 17, lookingDown ? 6 : 2, 1), color, rotation, origin, scale, effects, layerDepth1);
                 }
             }
         }
