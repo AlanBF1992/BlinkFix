@@ -35,23 +35,18 @@ namespace BlinkFix
             if (Game1.player.IsMale)
             {
                 FarmerRendererPatch.eyelashes = new(5, 10); // Lo negro
-                FarmerRendererPatch.skinShadow = new(7, 14); // El cuello
-                FarmerRendererPatch.skinBase = new(7, 10); // Entre los ojos
+                FarmerRendererPatch.skinShadow = new(264, 2); // El cuello
+                FarmerRendererPatch.skinBase = new(264, 3); // Entre los ojos
             }
             else
             {
                 FarmerRendererPatch.eyelashes = new Point(5, 11); // Lo negro
-                FarmerRendererPatch.skinShadow = new Point(7, 15); // El cuello
-                FarmerRendererPatch.skinBase = new Point(7, 11); // Entre los ojos
-
-                if (IsSoftFarmerLoaded)
-                {
-                    FarmerRendererPatch.skinShadow = new Point(7, 16);
-                }
+                FarmerRendererPatch.skinShadow = new Point(264, 3); // El cuello
+                FarmerRendererPatch.skinBase = new Point(264, 2); // Entre los ojos
             }
         }
 
-        private static void checkSoftFarmer(object? sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
+        private static void checkSoftFarmer(object? sender, GameLaunchedEventArgs e)
         {
             IsSoftFarmerLoaded = ModHelper.ModRegistry.IsLoaded("Crisaius.SoftFarmer");
         }
