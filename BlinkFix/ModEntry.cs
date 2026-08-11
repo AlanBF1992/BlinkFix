@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewValley;
 
 namespace BlinkFix
@@ -13,6 +14,7 @@ namespace BlinkFix
         public static IMonitor LogMonitor { get; internal set; } = null!;
         /// <summary>Monitoring and logging for the mod.</summary>
         public static IModHelper ModHelper { get; internal set; } = null!;
+        public static bool IsSoftFarmerLoaded { get; set; } = false;
 
         /******************
         ** Public methods *
@@ -23,6 +25,35 @@ namespace BlinkFix
             ModHelper = helper;
 
             VanillaPatches(new Harmony(ModManifest.UniqueID));
+
+            helper.Events.GameLoop.GameLaunched += checkSoftFarmer;
+            helper.Events.GameLoop.SaveLoaded += assignFarmerSex;
+        }
+
+        private static void assignFarmerSex(object? sender, SaveLoadedEventArgs e)
+        {
+            if (Game1.player.IsMale)
+            {
+                FarmerRendererPatch.eyelashes = new(5, 10); // Lo negro
+                FarmerRendererPatch.skinShadow = new(7, 14); // El cuello
+                FarmerRendererPatch.skinBase = new(7, 10); // Entre los ojos
+            }
+            else
+            {
+                FarmerRendererPatch.eyelashes = new Point(5, 11); // Lo negro
+                FarmerRendererPatch.skinShadow = new Point(7, 15); // El cuello
+                FarmerRendererPatch.skinBase = new Point(7, 11); // Entre los ojos
+
+                if (IsSoftFarmerLoaded)
+                {
+                    FarmerRendererPatch.skinShadow = new Point(7, 16);
+                }
+            }
+        }
+
+        private static void checkSoftFarmer(object? sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
+        {
+            IsSoftFarmerLoaded = ModHelper.ModRegistry.IsLoaded("Crisaius.SoftFarmer");
         }
 
         /// <summary>Base patches for the mod.</summary>
