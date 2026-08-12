@@ -18,7 +18,9 @@ namespace BlinkFix
         internal static readonly Vector2 rightEyeOffset = new(16, 0);
         internal static readonly Vector2 rightEyeExtraOffset = new(20, 0);
         internal static readonly Vector2 eyelidOffset = new(0, 4);
-        internal static readonly Vector2[] eyesOffset = [Vector2.Zero, new Vector2(0, 8), Vector2.Zero, Vector2.Zero, new Vector2(0, 4)];
+        internal static readonly Vector2 currentOffset1 = new(0, 8);
+        internal static readonly Vector2 currentOffset4 = new(0, 4);
+        internal static readonly Vector2 softFarmerOffset = new(0, 4);
 
         // Sex change
         internal static readonly Point eyebrowSide = new(4, 9);
@@ -112,7 +114,7 @@ namespace BlinkFix
                 {
                     if (ModEntry.IsSoftFarmerLoaded)
                     {
-                        eyePosition += new Vector2(0, 4);
+                        eyePosition += softFarmerOffset;
                     }
 
                     b.Draw(baseTexture, eyePosition, new Rectangle(skinBase, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
@@ -137,13 +139,13 @@ namespace BlinkFix
             }
             else
             {
-                Vector2 currentOffset = eyesOffset[currentEyes];
+                Vector2 currentOffset = currentEyes == 1? currentOffset1: currentOffset4;
 
                 if (!lookingDown)
                 {
                     if (ModEntry.IsSoftFarmerLoaded)
                     {
-                        eyePosition += new Vector2(0, 4);
+                        eyePosition += softFarmerOffset;
                     }
 
                     b.Draw(baseTexture, eyePosition - eyelidOffset + currentOffset, new Rectangle(eyelashes, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth2);
@@ -186,7 +188,7 @@ namespace BlinkFix
 
             bool lookingDown = facingDirection == 2;
 
-            Vector2 currentOffset = eyesOffset[currentEyes];
+            Vector2 currentOffset = currentEyes == 1 ? currentOffset1 : currentOffset4;
 
             if (who.IsMale) {
                 // Positioning
@@ -198,7 +200,7 @@ namespace BlinkFix
 
                     if (ModEntry.IsSoftFarmerLoaded)
                     {
-                        portraitOffset += new Vector2(0, 4);
+                        portraitOffset += softFarmerOffset;
                     }
 
                     if (who.IsSitting())
@@ -265,7 +267,7 @@ namespace BlinkFix
 
                     if (ModEntry.IsSoftFarmerLoaded)
                     {
-                        portraitOffset += new Vector2(0, 4);
+                        portraitOffset += softFarmerOffset;
                     }
 
                     if (who.IsSitting())
