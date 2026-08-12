@@ -19,6 +19,14 @@ namespace BlinkFix
         internal static readonly Vector2 currentOffset1 = new(0, 8);
         internal static readonly Vector2 currentOffset4 = new(0, 4);
         internal static readonly Vector2 softFarmerOffset = new(0, 4);
+        internal static readonly Vector2 lookOffsetLeft = new(-8, 0);
+        internal static readonly Vector2 lookOffsetRight = new(4, 0);
+        internal static readonly Vector2 pixelOffset = new(4, 0);
+        internal static readonly Vector2 sittingOffsetLeft = new(16, 0);
+        internal static readonly Vector2 sittingOffsetRight = new(-16, 0);
+        internal static readonly Vector2 horseOffsetLeft = new(-8, 28);
+        internal static readonly Vector2 horseOffsetRight = new(28, 0);
+        internal static readonly Vector2 horseOffsetDown = new(16, 0);
 
         // Sex change
         internal static readonly Rectangle eyebrowSideRect = new(4, 9, 1, 1);
@@ -203,17 +211,15 @@ namespace BlinkFix
 
                     if (who.IsSitting())
                     {
-                        portraitOffset += new Vector2(lookingLeft ? 16 : -16, 0); // Maybe only when lookin not down
+                        portraitOffset += lookingLeft ? sittingOffsetLeft : sittingOffsetRight; // Maybe only when lookin not down
                     }
 
-                    Vector2 leftLookOffset = new(lookingLeft ? -8 : 4, 0);
-
                     //Eyebrow
-                    b.Draw(baseTexture, portraitOffset - leftLookOffset, eyebrowSideRect, color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
+                    b.Draw(baseTexture, portraitOffset - (lookingLeft ? lookOffsetLeft : lookOffsetRight), eyebrowSideRect, color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
 
                     if (who.isRidingHorse())
                     {
-                        portraitOffset += new Vector2(lookingLeft ? -8 : 28, 0);
+                        portraitOffset += lookingLeft ? horseOffsetLeft : horseOffsetRight;
                     }
 
                     b.Draw(baseTexture, portraitOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
@@ -228,15 +234,13 @@ namespace BlinkFix
                 {
                     if (!who.UsingTool)
                     {
-                        Vector2 pixelOffset = new(4, 0);
-
                         //Eyebrow
                         b.Draw(baseTexture, portraitOffset - pixelOffset, eyebrowSideRect, color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
                         b.Draw(baseTexture, portraitOffset + pixelOffset + rightEyeExtraOffset, eyebrowSideRect, color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
 
                         if (who.isRidingHorse())
                         {
-                            portraitOffset += new Vector2(16, 0);
+                            portraitOffset += horseOffsetDown;
                         }
 
                         b.Draw(baseTexture, portraitOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
@@ -270,11 +274,11 @@ namespace BlinkFix
 
                     if (who.IsSitting())
                     {
-                        portraitOffset += new Vector2(lookingLeft ? 16 : -16, 0); // Maybe only when lookin not down
+                        portraitOffset += lookingLeft ? sittingOffsetLeft : sittingOffsetRight; // Maybe only when lookin not down
                     }
                     else if (who.isRidingHorse())
                     {
-                        portraitOffset += new Vector2(lookingLeft ? -8 : 28, 0);
+                        portraitOffset += lookingLeft ? horseOffsetLeft : horseOffsetRight;
                     }
 
                     b.Draw(baseTexture, portraitOffset + currentOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
@@ -289,7 +293,7 @@ namespace BlinkFix
                 {
                     if (who.isRidingHorse())
                     {
-                        portraitOffset += new Vector2(16, 0);
+                        portraitOffset += horseOffsetDown;
                     }
 
                     b.Draw(baseTexture, portraitOffset + currentOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
