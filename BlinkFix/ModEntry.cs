@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Menus;
 
 namespace BlinkFix
 {
@@ -28,6 +29,26 @@ namespace BlinkFix
 
             helper.Events.GameLoop.GameLaunched += checkSoftFarmer;
             helper.Events.GameLoop.SaveLoaded += assignFarmerSex;
+            helper.Events.Display.MenuChanged += reassignFarmerSex;
+        }
+
+        private static void reassignFarmerSex(object? sender, MenuChangedEventArgs e)
+        {
+            if(e.OldMenu is CharacterCustomization)
+            {
+                if (Game1.player.IsMale)
+                {
+                    FarmerRendererPatch.eyelashes = new(5, 10); // Lo negro
+                    FarmerRendererPatch.skinShadow = new(264, 2); // El cuello
+                    FarmerRendererPatch.skinBase = new(264, 3); // Entre los ojos
+                }
+                else
+                {
+                    FarmerRendererPatch.eyelashes = new Point(5, 11); // Lo negro
+                    FarmerRendererPatch.skinShadow = new Point(264, 3); // El cuello
+                    FarmerRendererPatch.skinBase = new Point(264, 2); // Entre los ojos
+                }
+            }
         }
 
         private static void assignFarmerSex(object? sender, SaveLoadedEventArgs e)

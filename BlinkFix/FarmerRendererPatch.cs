@@ -174,7 +174,6 @@ namespace BlinkFix
         internal static void drawGeneral(SpriteBatch b, Texture2D baseTexture, Vector2 position, int facingDirection, Farmer who, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth1, float layerDepth2)
         {
             int currentEyes = who.currentEyes;
-
             //If this is used someday
             if (currentEyes != 1 && currentEyes != 4)
             {
@@ -186,7 +185,6 @@ namespace BlinkFix
             }
 
             bool lookingDown = facingDirection == 2;
-            bool lookingLeft = facingDirection == 3;
 
             Vector2 currentOffset = eyesOffset[currentEyes];
 
@@ -196,15 +194,28 @@ namespace BlinkFix
 
                 if (!lookingDown)
                 {
+                    bool lookingLeft = facingDirection == 3;
+
                     if (ModEntry.IsSoftFarmerLoaded)
                     {
                         portraitOffset += new Vector2(0, 4);
+                    }
+
+                    if (who.IsSitting())
+                    {
+                        portraitOffset += new Vector2(lookingLeft ? 16 : -16, 0); // Maybe only when lookin not down
                     }
 
                     Vector2 leftLookOffset = new(lookingLeft ? -8 : 4, 0);
 
                     //Eyebrow
                     b.Draw(baseTexture, portraitOffset - leftLookOffset, new Rectangle(eyebrowSide, spriteSize), color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
+
+                    if (who.isRidingHorse())
+                    {
+                        portraitOffset += new Vector2(lookingLeft ? -8 : 28, 0);
+                    }
+
                     b.Draw(baseTexture, portraitOffset, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
 
                     //Eyelid
@@ -221,9 +232,14 @@ namespace BlinkFix
 
                         //Eyebrow
                         b.Draw(baseTexture, portraitOffset - pixelOffset, new Rectangle(eyebrowSide, spriteSize), color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
-                        b.Draw(baseTexture, portraitOffset, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
-
                         b.Draw(baseTexture, portraitOffset + pixelOffset + rightEyeExtraOffset, new Rectangle(eyebrowSide, spriteSize), color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
+
+                        if (who.isRidingHorse())
+                        {
+                            portraitOffset += new Vector2(16, 0);
+                        }
+
+                        b.Draw(baseTexture, portraitOffset, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
                         b.Draw(baseTexture, portraitOffset + rightEyeOffset, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
                     }
 
@@ -245,9 +261,20 @@ namespace BlinkFix
 
                 if (!lookingDown)
                 {
+                    bool lookingLeft = facingDirection == 3;
+
                     if (ModEntry.IsSoftFarmerLoaded)
                     {
                         portraitOffset += new Vector2(0, 4);
+                    }
+
+                    if (who.IsSitting())
+                    {
+                        portraitOffset += new Vector2(lookingLeft ? 16 : -16, 0); // Maybe only when lookin not down
+                    }
+                    else if (who.isRidingHorse())
+                    {
+                        portraitOffset += new Vector2(lookingLeft ? -8 : 28, 0);
                     }
 
                     b.Draw(baseTexture, portraitOffset + currentOffset, new Rectangle(eyelashes, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth2);
@@ -260,6 +287,11 @@ namespace BlinkFix
                 }
                 else
                 {
+                    if (who.isRidingHorse())
+                    {
+                        portraitOffset += new Vector2(16, 0);
+                    }
+
                     b.Draw(baseTexture, portraitOffset + currentOffset, new Rectangle(eyelashes, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth2);
                     b.Draw(baseTexture, portraitOffset, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
 
