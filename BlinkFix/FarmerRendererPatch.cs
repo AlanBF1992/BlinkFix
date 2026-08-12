@@ -12,8 +12,6 @@ namespace BlinkFix
     {
         internal readonly static IMonitor LogMonitor = ModEntry.LogMonitor;
 
-
-        internal static readonly Point spriteSize = new(1, 1);
         internal static readonly Vector2 doublePixelScale = new(8, 4);
         internal static readonly Vector2 rightEyeOffset = new(16, 0);
         internal static readonly Vector2 rightEyeExtraOffset = new(20, 0);
@@ -23,10 +21,10 @@ namespace BlinkFix
         internal static readonly Vector2 softFarmerOffset = new(0, 4);
 
         // Sex change
-        internal static readonly Point eyebrowSide = new(4, 9);
-        internal static Point eyelashes { get; set; }
-        internal static Point skinShadow { get; set; }
-        internal static Point skinBase { get; set; }
+        internal static readonly Rectangle eyebrowSideRect = new(4, 9, 1, 1);
+        internal static Rectangle eyelashRect { get; set; }
+        internal static Rectangle skinShadowRect { get; set; }
+        internal static Rectangle skinBaseRect { get; set; }
 
         internal static IEnumerable<CodeInstruction> drawTranspiler(IEnumerable<CodeInstruction> instructions)
         {
@@ -117,23 +115,23 @@ namespace BlinkFix
                         eyePosition += softFarmerOffset;
                     }
 
-                    b.Draw(baseTexture, eyePosition, new Rectangle(skinBase, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, eyePosition, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
 
                     if (currentEyes == 1)
                     {
-                        b.Draw(baseTexture, eyePosition - eyelidOffset, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                        b.Draw(baseTexture, eyePosition - eyelidOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
                     }
                 }
                 else
                 {
-                    b.Draw(baseTexture, eyePosition + eyelidOffset, new Rectangle(skinBase, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
-                    b.Draw(baseTexture, eyePosition + eyelidOffset + rightEyeOffset, new Rectangle(skinBase, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, eyePosition + eyelidOffset + rightEyeOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
 
                     if (currentEyes == 1)
                     {
-                        b.Draw(baseTexture, eyePosition, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                        b.Draw(baseTexture, eyePosition, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
 
-                        b.Draw(baseTexture, eyePosition + rightEyeOffset, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                        b.Draw(baseTexture, eyePosition + rightEyeOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
                     }
                 }
             }
@@ -148,26 +146,26 @@ namespace BlinkFix
                         eyePosition += softFarmerOffset;
                     }
 
-                    b.Draw(baseTexture, eyePosition - eyelidOffset + currentOffset, new Rectangle(eyelashes, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth2);
-                    b.Draw(baseTexture, eyePosition - eyelidOffset, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, eyePosition - eyelidOffset + currentOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                    b.Draw(baseTexture, eyePosition - eyelidOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
 
                     if (currentEyes == 1)
                     {
-                        b.Draw(baseTexture, eyePosition, new Rectangle(skinBase, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                        b.Draw(baseTexture, eyePosition, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
                     }
                 }
                 else
                 {
-                    b.Draw(baseTexture, eyePosition + currentOffset, new Rectangle(eyelashes, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth2);
-                    b.Draw(baseTexture, eyePosition, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, eyePosition + currentOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                    b.Draw(baseTexture, eyePosition, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
 
-                    b.Draw(baseTexture, eyePosition + currentOffset + rightEyeOffset, new Rectangle(eyelashes, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth2);
-                    b.Draw(baseTexture, eyePosition + rightEyeOffset, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, eyePosition + currentOffset + rightEyeOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                    b.Draw(baseTexture, eyePosition + rightEyeOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
 
                     if (currentEyes == 1)
                     {
-                        b.Draw(baseTexture, eyePosition + eyelidOffset, new Rectangle(skinBase, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
-                        b.Draw(baseTexture, eyePosition + eyelidOffset + rightEyeOffset, new Rectangle(skinBase, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                        b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                        b.Draw(baseTexture, eyePosition + eyelidOffset + rightEyeOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
                     }
                 }
             }
@@ -211,20 +209,20 @@ namespace BlinkFix
                     Vector2 leftLookOffset = new(lookingLeft ? -8 : 4, 0);
 
                     //Eyebrow
-                    b.Draw(baseTexture, portraitOffset - leftLookOffset, new Rectangle(eyebrowSide, spriteSize), color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
+                    b.Draw(baseTexture, portraitOffset - leftLookOffset, eyebrowSideRect, color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
 
                     if (who.isRidingHorse())
                     {
                         portraitOffset += new Vector2(lookingLeft ? -8 : 28, 0);
                     }
 
-                    b.Draw(baseTexture, portraitOffset, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, portraitOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
 
                     //Eyelid
-                    b.Draw(baseTexture, portraitOffset + eyelidOffset, new Rectangle(skinBase, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, portraitOffset + eyelidOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
 
                     //Eyelashes
-                    b.Draw(baseTexture, portraitOffset + currentOffset, new Rectangle(eyelashes, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                    b.Draw(baseTexture, portraitOffset + currentOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
                 }
                 else
                 {
@@ -233,27 +231,27 @@ namespace BlinkFix
                         Vector2 pixelOffset = new(4, 0);
 
                         //Eyebrow
-                        b.Draw(baseTexture, portraitOffset - pixelOffset, new Rectangle(eyebrowSide, spriteSize), color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
-                        b.Draw(baseTexture, portraitOffset + pixelOffset + rightEyeExtraOffset, new Rectangle(eyebrowSide, spriteSize), color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
+                        b.Draw(baseTexture, portraitOffset - pixelOffset, eyebrowSideRect, color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
+                        b.Draw(baseTexture, portraitOffset + pixelOffset + rightEyeExtraOffset, eyebrowSideRect, color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
 
                         if (who.isRidingHorse())
                         {
                             portraitOffset += new Vector2(16, 0);
                         }
 
-                        b.Draw(baseTexture, portraitOffset, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
-                        b.Draw(baseTexture, portraitOffset + rightEyeOffset, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                        b.Draw(baseTexture, portraitOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                        b.Draw(baseTexture, portraitOffset + rightEyeOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
                     }
 
                     //Eyelid
-                    b.Draw(baseTexture, portraitOffset + eyelidOffset, new Rectangle(skinBase, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, portraitOffset + eyelidOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
 
-                    b.Draw(baseTexture, portraitOffset + eyelidOffset + rightEyeOffset, new Rectangle(skinBase, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, portraitOffset + eyelidOffset + rightEyeOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
 
                     //Eyelashes
-                    b.Draw(baseTexture, portraitOffset + currentOffset, new Rectangle(eyelashes, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                    b.Draw(baseTexture, portraitOffset + currentOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
 
-                    b.Draw(baseTexture, portraitOffset + currentOffset + rightEyeOffset, new Rectangle(eyelashes, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                    b.Draw(baseTexture, portraitOffset + currentOffset + rightEyeOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
                 }
             }
             else
@@ -279,12 +277,12 @@ namespace BlinkFix
                         portraitOffset += new Vector2(lookingLeft ? -8 : 28, 0);
                     }
 
-                    b.Draw(baseTexture, portraitOffset + currentOffset, new Rectangle(eyelashes, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth2);
-                    b.Draw(baseTexture, portraitOffset, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, portraitOffset + currentOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                    b.Draw(baseTexture, portraitOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
 
                     if (currentEyes == 1)
                     {
-                        b.Draw(baseTexture, portraitOffset + eyelidOffset, new Rectangle(skinBase, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                        b.Draw(baseTexture, portraitOffset + eyelidOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
                     }
                 }
                 else
@@ -294,16 +292,16 @@ namespace BlinkFix
                         portraitOffset += new Vector2(16, 0);
                     }
 
-                    b.Draw(baseTexture, portraitOffset + currentOffset, new Rectangle(eyelashes, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth2);
-                    b.Draw(baseTexture, portraitOffset, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, portraitOffset + currentOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                    b.Draw(baseTexture, portraitOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
 
-                    b.Draw(baseTexture, portraitOffset + currentOffset + rightEyeOffset, new Rectangle(eyelashes, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth2);
-                    b.Draw(baseTexture, portraitOffset + rightEyeOffset, new Rectangle(skinShadow, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, portraitOffset + currentOffset + rightEyeOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                    b.Draw(baseTexture, portraitOffset + rightEyeOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
 
                     if (currentEyes == 1)
                     {
-                        b.Draw(baseTexture, portraitOffset + eyelidOffset, new Rectangle(skinBase, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
-                        b.Draw(baseTexture, portraitOffset + eyelidOffset + rightEyeOffset, new Rectangle(skinBase, spriteSize), color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                        b.Draw(baseTexture, portraitOffset + eyelidOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                        b.Draw(baseTexture, portraitOffset + eyelidOffset + rightEyeOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
                     }
                 }
             }

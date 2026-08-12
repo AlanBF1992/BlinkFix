@@ -65,15 +65,15 @@ namespace BlinkFix
         {
             if (IsMale)
             {
-                FarmerRendererPatch.eyelashes = new(5, 10); // Lo negro
-                FarmerRendererPatch.skinShadow = new(264, 2); // El cuello
-                FarmerRendererPatch.skinBase = new(264, 3); // Entre los ojos
+                FarmerRendererPatch.eyelashRect = new(5, 10, 1, 1);
+                FarmerRendererPatch.skinShadowRect = new(264, 2, 1, 1);
+                FarmerRendererPatch.skinBaseRect = new(264, 3, 1, 1);
             }
             else
             {
-                FarmerRendererPatch.eyelashes = new Point(5, 11); // Lo negro
-                FarmerRendererPatch.skinShadow = new Point(264, 3); // El cuello
-                FarmerRendererPatch.skinBase = new Point(264, 2); // Entre los ojos
+                FarmerRendererPatch.eyelashRect = new(5, 11, 1, 1);
+                FarmerRendererPatch.skinShadowRect = new(264, 3, 1, 1);
+                FarmerRendererPatch.skinBaseRect = new(264, 2, 1, 1);
             }
         }
     }
