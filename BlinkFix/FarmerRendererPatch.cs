@@ -24,7 +24,7 @@ namespace BlinkFix
         internal static readonly Vector2 pixelOffset = new(4, 0);
         internal static readonly Vector2 sittingOffsetLeft = new(16, 0);
         internal static readonly Vector2 sittingOffsetRight = new(-16, 0);
-        internal static readonly Vector2 horseOffsetLeft = new(-8, 28);
+        internal static readonly Vector2 horseOffsetLeft = new(-8, 0);
         internal static readonly Vector2 horseOffsetRight = new(28, 0);
         internal static readonly Vector2 horseOffsetDown = new(16, 0);
 
@@ -145,7 +145,7 @@ namespace BlinkFix
             }
             else
             {
-                Vector2 currentOffset = currentEyes == 1? currentOffset1: currentOffset4;
+                Vector2 currentOffset = currentEyes == 1 ? currentOffset1 : currentOffset4;
 
                 if (!lookingDown)
                 {
@@ -196,7 +196,8 @@ namespace BlinkFix
 
             Vector2 currentOffset = currentEyes == 1 ? currentOffset1 : currentOffset4;
 
-            if (who.IsMale) {
+            if (who.IsMale)
+            {
                 if (!lookingDown)
                 {
                     eyePosition.Y -= 4; // Fixes for portrait
