@@ -24,11 +24,13 @@ namespace BlinkFix
         internal static readonly Vector2 pixelOffset = new(4, 0);
         internal static readonly Vector2 sittingOffsetLeft = new(16, 0);
         internal static readonly Vector2 sittingOffsetRight = new(-16, 0);
-        internal static readonly Vector2 horseOffsetLeft = new(-8, 0);
-        internal static readonly Vector2 horseOffsetRight = new(28, 0);
-        internal static readonly Vector2 horseOffsetDown = new(16, 0);
 
-        // Sex change
+        // Thin horse
+        internal static Vector2 horseOffsetLeft { get; set; }
+        internal static Vector2 horseOffsetRight { get; set; }
+        internal static Vector2 horseOffsetDown { get; set; }
+
+        // Sex changes
         internal static readonly Rectangle eyebrowSideRect = new(4, 9, 1, 1);
         internal static Rectangle eyelashRect { get; set; }
         internal static Rectangle skinShadowRect { get; set; }

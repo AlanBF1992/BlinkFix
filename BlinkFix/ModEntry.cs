@@ -16,6 +16,7 @@ namespace BlinkFix
         /// <summary>Monitoring and logging for the mod.</summary>
         public static IModHelper ModHelper { get; internal set; } = null!;
         public static bool IsSoftFarmerLoaded { get; set; } = false;
+        public static Func<bool> IsHorseThin { get; set; } = () => false;
 
         /******************
         ** Public methods *
@@ -28,6 +29,9 @@ namespace BlinkFix
             VanillaPatches(new Harmony(ModManifest.UniqueID));
 
             helper.Events.GameLoop.GameLaunched += checkSoftFarmer;
+            helper.Events.GameLoop.GameLaunched += setHorseWeightChecker;
+            helper.Events.GameLoop.SaveLoaded += checkHorseWeight;
+            helper.Events.GameLoop.SaveLoaded += assignFarmerSex;
             helper.Events.GameLoop.SaveLoaded += assignFarmerSex;
             helper.Events.Display.MenuChanged += reassignFarmerSex;
         }
@@ -43,9 +47,38 @@ namespace BlinkFix
             );
         }
 
+        /**********
+         * EVENTS *
+         **********/
+
         private static void checkSoftFarmer(object? sender, GameLaunchedEventArgs e)
         {
             IsSoftFarmerLoaded = ModHelper.ModRegistry.IsLoaded("Crisaius.SoftFarmer");
+        }
+
+        private static void setHorseWeightChecker(object? sender, GameLaunchedEventArgs e)
+        {
+            if (ModHelper.ModRegistry.IsLoaded("Goldenrevolver.HorseOverhaul"))
+            {
+                // Hacer
+                IsHorseThin = () => (bool)((dynamic)AccessTools.Field("HorseOverhaul.Patches.ThinHorseDrawPatches:mod").GetValue(null)!).Config.ThinHorse;
+            }
+        }
+
+        private static void checkHorseWeight(object? sender, SaveLoadedEventArgs e)
+        {
+            if (IsHorseThin())
+            {
+                FarmerRendererPatch.horseOffsetLeft = new(-8, 0);
+                FarmerRendererPatch.horseOffsetRight = new(28, 0);
+                FarmerRendererPatch.horseOffsetDown = new(16, 0);
+            }
+            else
+            {
+                FarmerRendererPatch.horseOffsetLeft = new(-48, 0);
+                FarmerRendererPatch.horseOffsetRight = new(-16, 0);
+                FarmerRendererPatch.horseOffsetDown = new(-24, 0);
+            }
         }
 
         private static void assignFarmerSex(object? sender, SaveLoadedEventArgs e)
@@ -61,6 +94,9 @@ namespace BlinkFix
             }
         }
 
+        /***********
+         * HELPERS *
+         ***********/
         private static void SetSex(bool IsMale)
         {
             if (IsMale)
