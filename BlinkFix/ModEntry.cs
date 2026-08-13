@@ -32,7 +32,6 @@ namespace BlinkFix
             helper.Events.GameLoop.GameLaunched += setHorseWeightChecker;
             helper.Events.GameLoop.SaveLoaded += checkHorseWeight;
             helper.Events.GameLoop.SaveLoaded += assignFarmerSex;
-            helper.Events.GameLoop.SaveLoaded += assignFarmerSex;
             helper.Events.Display.MenuChanged += reassignFarmerSex;
         }
 
