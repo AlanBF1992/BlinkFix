@@ -13,12 +13,12 @@ namespace BlinkFix
     {
         /// <summary>Monitoring and logging for the mod.</summary>
         public static IMonitor LogMonitor { get; internal set; } = null!;
-        /// <summary>Monitoring and logging for the mod.</summary>
+        /// <summary>API access for mod events, assets, and reflection.</summary>
         public static IModHelper ModHelper { get; internal set; } = null!;
 
-        /******************
-        ** Public methods *
-        *******************/
+        /*****************
+        * Public methods *
+        ******************/
         public override void Entry(IModHelper helper)
         {
             LogMonitor = Monitor;
@@ -35,7 +35,7 @@ namespace BlinkFix
         /// <param name="harmony">Harmony instance used to patch the game.</param>
         internal static void VanillaPatches(Harmony harmony)
         {
-            // Cambia la forma en la que se calcula el nivel en Vanilla
+            // Changes the way the eyes are drawn in Vanilla
             harmony.Patch(
                 original: AccessTools.Method(typeof(FarmerRenderer), nameof(FarmerRenderer.draw), [typeof(SpriteBatch), typeof(FarmerSprite.AnimationFrame), typeof(int), typeof(Rectangle), typeof(Vector2), typeof(Vector2), typeof(float), typeof(int), typeof(Color), typeof(float), typeof(float), typeof(Farmer)]),
                 transpiler: new HarmonyMethod(typeof(FarmerRendererPatch), nameof(FarmerRendererPatch.drawTranspiler))
@@ -66,6 +66,8 @@ namespace BlinkFix
         /***********
          * HELPERS *
          ***********/
+        /// <summary>Applies the farmer sex-specific sprite-sheet rects.</summary>
+        /// <param name="IsMale">Whether the farmer is male.</param>
         private static void SetSex(bool IsMale)
         {
             if (IsMale)
