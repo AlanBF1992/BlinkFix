@@ -126,7 +126,7 @@ namespace BlinkFix
 
                     b.Draw(baseTexture, eyePosition, skinBaseSingleRect, color, rotation, origin, scale, effects, layerDepth1);
 
-                    if (who.currentEyes == 1)
+                    if (currentEyes == 1)
                     {
                         b.Draw(baseTexture, eyePosition - eyelidOffset, skinShadowSingleRect, color, rotation, origin, scale, effects, layerDepth2);
                     }
@@ -135,7 +135,7 @@ namespace BlinkFix
                 {
                     b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseFullRect, color, rotation, origin, scale, effects, layerDepth1);
 
-                    if (who.currentEyes == 1)
+                    if (currentEyes == 1)
                     {
                         b.Draw(baseTexture, eyePosition, skinShadowFullRect, color, rotation, origin, scale, effects, layerDepth2);
                     }
@@ -157,7 +157,7 @@ namespace BlinkFix
                     //Eyebrow
                     b.Draw(baseTexture, eyePosition - eyelidOffset, skinShadowSingleRect, color, rotation, origin, scale, effects, layerDepth1);
                     //Eyelid
-                    if (who.currentEyes == 1)
+                    if (currentEyes == 1)
                     {
                         b.Draw(baseTexture, eyePosition, skinBaseSingleRect, color, rotation, origin, scale, effects, layerDepth1);
                     }
@@ -169,7 +169,7 @@ namespace BlinkFix
                     //Eyebrow
                     b.Draw(baseTexture, eyePosition, skinShadowFullRect, color, rotation, origin, scale, effects, layerDepth1);
                     //Eyelid
-                    if (who.currentEyes == 1)
+                    if (currentEyes == 1)
                     {
                         b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseFullRect, color, rotation, origin, scale, effects, layerDepth1);
                     }
