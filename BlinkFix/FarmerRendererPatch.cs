@@ -5,6 +5,7 @@ using StardewModdingAPI;
 using StardewValley;
 using System.Reflection;
 using System.Reflection.Emit;
+using static StardewValley.FarmerRenderer;
 
 namespace BlinkFix
 {
@@ -12,29 +13,28 @@ namespace BlinkFix
     {
         internal readonly static IMonitor LogMonitor = ModEntry.LogMonitor;
 
-        internal static readonly Vector2 doublePixelScale = new(8, 4);
-        internal static readonly Vector2 rightEyeOffset = new(16, 0);
-        internal static readonly Vector2 rightEyeExtraOffset = new(20, 0);
-        internal static readonly Vector2 eyelidOffset = new(0, 4);
-        internal static readonly Vector2 currentOffset1 = new(0, 8);
-        internal static readonly Vector2 currentOffset4 = new(0, 4);
-        internal static readonly Vector2 softFarmerOffset = new(0, 4);
-        internal static readonly Vector2 lookOffsetLeft = new(-8, 0);
-        internal static readonly Vector2 lookOffsetRight = new(4, 0);
-        internal static readonly Vector2 pixelOffset = new(4, 0);
-        internal static readonly Vector2 sittingOffsetLeft = new(16, 0);
-        internal static readonly Vector2 sittingOffsetRight = new(-16, 0);
+        // Eye state offsets
+        internal readonly static Vector2 currentOffset1 = new(0, 8);
+        internal readonly static Vector2 currentOffset4 = new(0, 4);
 
-        // Thin horse
-        internal static Vector2 horseOffsetLeft { get; set; }
-        internal static Vector2 horseOffsetRight { get; set; }
-        internal static Vector2 horseOffsetDown { get; set; }
+        // Eyes offsets
+        internal readonly static Vector2 eyelidOffset = new(0, 4);
+        internal readonly static Vector2 eyebrowSideLeftOffset = new(-4, 0);
+        internal readonly static Vector2 eyebrowSideRightOffset = new(8, 0);
+        internal readonly static Vector2 eyebrowFullRightOffset = new(24, 0);
 
         // Sex changes
         internal static readonly Rectangle eyebrowSideRect = new(4, 9, 1, 1);
-        internal static Rectangle eyelashRect { get; set; }
-        internal static Rectangle skinShadowRect { get; set; }
-        internal static Rectangle skinBaseRect { get; set; }
+        internal static Rectangle eyelashSingleRect { get; set; }
+        internal static Rectangle eyelashFullRect { get; set; }
+        internal static Rectangle skinShadowSingleRect { get; set; }
+        internal static Rectangle skinShadowFullRect { get; set; }
+        internal static Rectangle skinBaseSingleRect { get; set; }
+        internal static Rectangle skinBaseFullRect { get; set; }
+
+        // Mod compats
+        internal static bool IsSoftFarmerLoaded { get; set; } = false;
+        internal static readonly Vector2 softFarmerOffset = new(0, 4);
 
         internal static IEnumerable<CodeInstruction> drawTranspiler(IEnumerable<CodeInstruction> instructions)
         {
@@ -104,13 +104,12 @@ namespace BlinkFix
 
         internal static void drawSwimming(SpriteBatch b, Texture2D baseTexture, Vector2 eyePosition, Farmer who, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth1, float layerDepth2)
         {
-            int currentEyes = who.currentEyes;
-
+            var currentEyes = who.currentEyes;
             //If this is used someday
             if (currentEyes != 1 && currentEyes != 4)
             {
                 b.Draw(baseTexture, eyePosition, new Rectangle(5, 16, (who.FacingDirection == 2) ? 6 : 2, 2), color, rotation, origin, scale, effects, layerDepth1);
-                b.Draw(baseTexture, eyePosition, new Rectangle(264 + ((who.FacingDirection == 3) ? 4 : 0), 2 + (currentEyes - 1) * 2, (who.FacingDirection == 2) ? 6 : 2, 2), color, rotation, origin, scale, effects, layerDepth2);
+                b.Draw(baseTexture, eyePosition, new Rectangle(264 + ((who.FacingDirection == 3) ? 4 : 0), who.currentEyes * 2, (who.FacingDirection == 2) ? 6 : 2, 2), color, rotation, origin, scale, effects, layerDepth2);
                 return;
             }
 
@@ -120,62 +119,59 @@ namespace BlinkFix
             {
                 if (!lookingDown)
                 {
-                    if (ModEntry.IsSoftFarmerLoaded)
+                    if (IsSoftFarmerLoaded)
                     {
                         eyePosition += softFarmerOffset;
                     }
 
-                    b.Draw(baseTexture, eyePosition, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, eyePosition, skinBaseSingleRect, color, rotation, origin, scale, effects, layerDepth1);
 
-                    if (currentEyes == 1)
+                    if (who.currentEyes == 1)
                     {
-                        b.Draw(baseTexture, eyePosition - eyelidOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                        b.Draw(baseTexture, eyePosition - eyelidOffset, skinShadowSingleRect, color, rotation, origin, scale, effects, layerDepth2);
                     }
                 }
                 else
                 {
-                    b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
-                    b.Draw(baseTexture, eyePosition + eyelidOffset + rightEyeOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseFullRect, color, rotation, origin, scale, effects, layerDepth1);
 
-                    if (currentEyes == 1)
+                    if (who.currentEyes == 1)
                     {
-                        b.Draw(baseTexture, eyePosition, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
-
-                        b.Draw(baseTexture, eyePosition + rightEyeOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                        b.Draw(baseTexture, eyePosition, skinShadowFullRect, color, rotation, origin, scale, effects, layerDepth2);
                     }
                 }
             }
             else
             {
-                Vector2 currentOffset = currentEyes == 1 ? currentOffset1 : currentOffset4;
+                var currentOffset = currentEyes == 1 ? currentOffset1 : currentOffset4;
 
                 if (!lookingDown)
                 {
-                    if (ModEntry.IsSoftFarmerLoaded)
+                    if (IsSoftFarmerLoaded)
                     {
                         eyePosition += softFarmerOffset;
                     }
 
-                    b.Draw(baseTexture, eyePosition - eyelidOffset + currentOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
-                    b.Draw(baseTexture, eyePosition - eyelidOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
-
-                    if (currentEyes == 1)
+                    //Eyelashes
+                    b.Draw(baseTexture, eyePosition - eyelidOffset + currentOffset, eyelashSingleRect, color, rotation, origin, scale, effects, layerDepth2);
+                    //Eyebrow
+                    b.Draw(baseTexture, eyePosition - eyelidOffset, skinShadowSingleRect, color, rotation, origin, scale, effects, layerDepth1);
+                    //Eyelid
+                    if (who.currentEyes == 1)
                     {
-                        b.Draw(baseTexture, eyePosition, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                        b.Draw(baseTexture, eyePosition, skinBaseSingleRect, color, rotation, origin, scale, effects, layerDepth1);
                     }
                 }
                 else
                 {
-                    b.Draw(baseTexture, eyePosition + currentOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
-                    b.Draw(baseTexture, eyePosition, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
-
-                    b.Draw(baseTexture, eyePosition + currentOffset + rightEyeOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
-                    b.Draw(baseTexture, eyePosition + rightEyeOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
-
-                    if (currentEyes == 1)
+                    //Eyelashes
+                    b.Draw(baseTexture, eyePosition + currentOffset, eyelashFullRect, color, rotation, origin, scale, effects, layerDepth2);
+                    //Eyebrow
+                    b.Draw(baseTexture, eyePosition, skinShadowFullRect, color, rotation, origin, scale, effects, layerDepth1);
+                    //Eyelid
+                    if (who.currentEyes == 1)
                     {
-                        b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
-                        b.Draw(baseTexture, eyePosition + eyelidOffset + rightEyeOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                        b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseFullRect, color, rotation, origin, scale, effects, layerDepth1);
                     }
                 }
             }
@@ -183,136 +179,95 @@ namespace BlinkFix
 
         internal static void drawGeneral(SpriteBatch b, Texture2D baseTexture, Vector2 eyePosition, int facingDirection, Farmer who, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth1, float layerDepth2)
         {
+            bool lookingDown = facingDirection == 2;
+            bool lookingLeft = facingDirection == 3;
+
             int currentEyes = who.currentEyes;
+
             //If this is used someday
             if (currentEyes != 1 && currentEyes != 4)
             {
                 var positionDif = new Vector2(0, ((who.FacingDirection == 1 || who.FacingDirection == 3) ? 40 : 44) - ((who.IsMale && who.FacingDirection != 2) ? 36 : 40));
 
-                b.Draw(baseTexture, eyePosition, new Rectangle(5, 16, 2, 2), color, rotation, origin, scale, effects, layerDepth1);
-                b.Draw(baseTexture, eyePosition + positionDif, new Rectangle(264 + (facingDirection == 3 ? 4 : 0), 2 + (currentEyes - 1) * 2, 2, 2), color, rotation, origin, scale, effects, layerDepth2);
+                b.Draw(baseTexture, eyePosition, new Rectangle(5, 16, lookingDown ? 6 : 2, 2), color, rotation, origin, scale, effects, layerDepth1);
+                b.Draw(baseTexture, eyePosition + positionDif, new Rectangle(264 + (lookingLeft ? 4 : 0), 2 + (currentEyes - 1) * 2, lookingDown ? 6 : 2, 2), color, rotation, origin, scale, effects, layerDepth2);
                 return;
             }
 
-            bool lookingDown = facingDirection == 2;
+            var currentOffset = currentEyes == 1 ? currentOffset1 : currentOffset4;
 
-            Vector2 currentOffset = currentEyes == 1 ? currentOffset1 : currentOffset4;
+            if (who.IsMale) {
 
-            if (who.IsMale)
-            {
                 if (!lookingDown)
                 {
-                    eyePosition.Y -= 4; // Fixes for portrait
+                    eyePosition.Y -= 4;
 
-                    bool lookingLeft = facingDirection == 3;
-
-                    if (ModEntry.IsSoftFarmerLoaded)
+                    if (IsSoftFarmerLoaded)
                     {
                         eyePosition += softFarmerOffset;
                     }
 
-                    if (who.IsSitting())
-                    {
-                        eyePosition += lookingLeft ? sittingOffsetLeft : sittingOffsetRight;
-                    }
+                    Vector2 lookOffset = lookingLeft ? eyebrowSideRightOffset : eyebrowSideLeftOffset;
 
                     //Eyebrow
-                    b.Draw(baseTexture, eyePosition - (lookingLeft ? lookOffsetLeft : lookOffsetRight), eyebrowSideRect, color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
-
-                    if (who.isRidingHorse())
-                    {
-                        eyePosition += lookingLeft ? horseOffsetLeft : horseOffsetRight;
-                    }
-
-                    b.Draw(baseTexture, eyePosition, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, eyePosition + lookOffset, eyebrowSideRect, color, rotation, origin, scale, effects, layerDepth1);
+                    b.Draw(baseTexture, eyePosition, skinShadowSingleRect, color, rotation, origin, scale, effects, layerDepth1);
 
                     //Eyelid
-                    b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                    b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseSingleRect, color, rotation, origin, scale, effects, layerDepth1);
 
                     //Eyelashes
-                    b.Draw(baseTexture, eyePosition + currentOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                    b.Draw(baseTexture, eyePosition + currentOffset, eyelashSingleRect, color, rotation, origin, scale, effects, layerDepth2);
                 }
                 else
                 {
                     if (who.FacingDirection == 2)
                     {
-                        eyePosition.Y -= 4; // Fixes for portrait
+                        eyePosition.Y -= 4;
                     }
 
                     if (!who.UsingTool)
                     {
+                        //Extra Eyebrow Pixel
+                        b.Draw(baseTexture, eyePosition + eyebrowSideLeftOffset, eyebrowSideRect, color, rotation, origin, scale, effects, layerDepth2);
+                        b.Draw(baseTexture, eyePosition + eyebrowFullRightOffset, eyebrowSideRect, color, rotation, origin, scale, effects, layerDepth2);
+
                         //Eyebrow
-                        b.Draw(baseTexture, eyePosition - pixelOffset, eyebrowSideRect, color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
-                        b.Draw(baseTexture, eyePosition + pixelOffset + rightEyeExtraOffset, eyebrowSideRect, color, rotation, origin, scale, effects, layerDepth1); // Changes when bald
-
-                        if (who.isRidingHorse())
-                        {
-                            eyePosition += horseOffsetDown;
-                        }
-
-                        b.Draw(baseTexture, eyePosition, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
-                        b.Draw(baseTexture, eyePosition + rightEyeOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
+                        b.Draw(baseTexture, eyePosition, skinShadowFullRect, color, rotation, origin, scale, effects, layerDepth2);
                     }
 
                     //Eyelid
-                    b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
-
-                    b.Draw(baseTexture, eyePosition + eyelidOffset + rightEyeOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
-
+                    b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseFullRect, color, rotation, origin, scale, effects, layerDepth1);
                     //Eyelashes
-                    b.Draw(baseTexture, eyePosition + currentOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
-
-                    b.Draw(baseTexture, eyePosition + currentOffset + rightEyeOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
+                    b.Draw(baseTexture, eyePosition + currentOffset, eyelashFullRect, color, rotation, origin, scale, effects, layerDepth2);
                 }
             }
             else
             {
                 if (!lookingDown)
                 {
-                    eyePosition.Y -= 4; // Fixes for portrait
+                    eyePosition.Y -= 4;
 
-                    bool lookingLeft = facingDirection == 3;
-
-                    if (ModEntry.IsSoftFarmerLoaded)
+                    if (IsSoftFarmerLoaded)
                     {
                         eyePosition += softFarmerOffset;
                     }
 
-                    if (who.IsSitting())
-                    {
-                        eyePosition += lookingLeft ? sittingOffsetLeft : sittingOffsetRight; // Maybe only when lookin not down
-                    }
-                    else if (who.isRidingHorse())
-                    {
-                        eyePosition += lookingLeft ? horseOffsetLeft : horseOffsetRight;
-                    }
-
-                    b.Draw(baseTexture, eyePosition + currentOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
-                    b.Draw(baseTexture, eyePosition, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
-
-                    if (currentEyes == 1)
-                    {
-                        b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
-                    }
+                    //Eyebrow
+                    b.Draw(baseTexture, eyePosition, skinShadowSingleRect, color, rotation, origin, scale, effects, layerDepth1);
+                    //Eyelid
+                    b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseSingleRect, color, rotation, origin, scale, effects, layerDepth1);
+                    //Eyelashes
+                    b.Draw(baseTexture, eyePosition + currentOffset, eyelashSingleRect, color, rotation, origin, scale, effects, layerDepth2);
                 }
                 else
                 {
-                    if (who.isRidingHorse())
-                    {
-                        eyePosition += horseOffsetDown;
-                    }
-
-                    b.Draw(baseTexture, eyePosition + currentOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
-                    b.Draw(baseTexture, eyePosition, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
-
-                    b.Draw(baseTexture, eyePosition + currentOffset + rightEyeOffset, eyelashRect, color, rotation, origin, doublePixelScale, effects, layerDepth2);
-                    b.Draw(baseTexture, eyePosition + rightEyeOffset, skinShadowRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
-
-                    if (currentEyes == 1)
-                    {
-                        b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
-                        b.Draw(baseTexture, eyePosition + eyelidOffset + rightEyeOffset, skinBaseRect, color, rotation, origin, doublePixelScale, effects, layerDepth1);
-                    }
+                    //Eyebrow
+                    b.Draw(baseTexture, eyePosition, skinShadowFullRect, color, rotation, origin, scale, effects, layerDepth1);
+                    //Eyelid
+                    b.Draw(baseTexture, eyePosition + eyelidOffset, skinBaseFullRect, color, rotation, origin, scale, effects, layerDepth1);
+                    //Eyelashes
+                    b.Draw(baseTexture, eyePosition + currentOffset, eyelashFullRect, color, rotation, origin, scale, effects, layerDepth2);
                 }
             }
         }
