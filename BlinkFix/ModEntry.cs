@@ -2,7 +2,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Menus;
 
 namespace BlinkFix
 {
@@ -23,6 +25,10 @@ namespace BlinkFix
             ModHelper = helper;
 
             VanillaPatches(new Harmony(ModManifest.UniqueID));
+
+            helper.Events.GameLoop.GameLaunched += checkSoftFarmer;
+            helper.Events.GameLoop.SaveLoaded += assignFarmerSex;
+            helper.Events.Display.MenuChanged += reassignFarmerSex;
         }
 
         /// <summary>Base patches for the mod.</summary>
@@ -34,6 +40,52 @@ namespace BlinkFix
                 original: AccessTools.Method(typeof(FarmerRenderer), nameof(FarmerRenderer.draw), [typeof(SpriteBatch), typeof(FarmerSprite.AnimationFrame), typeof(int), typeof(Rectangle), typeof(Vector2), typeof(Vector2), typeof(float), typeof(int), typeof(Color), typeof(float), typeof(float), typeof(Farmer)]),
                 transpiler: new HarmonyMethod(typeof(FarmerRendererPatch), nameof(FarmerRendererPatch.drawTranspiler))
             );
+        }
+
+        /**********
+         * EVENTS *
+         **********/
+        private static void checkSoftFarmer(object? sender, GameLaunchedEventArgs e)
+        {
+            FarmerRendererPatch.IsSoftFarmerLoaded = ModHelper.ModRegistry.IsLoaded("Crisaius.SoftFarmer");
+        }
+
+        private static void assignFarmerSex(object? sender, SaveLoadedEventArgs e)
+        {
+            SetSex(Game1.player.IsMale);
+        }
+
+        private static void reassignFarmerSex(object? sender, MenuChangedEventArgs e)
+        {
+            if (e.OldMenu is CharacterCustomization)
+            {
+                SetSex(Game1.player.IsMale);
+            }
+        }
+
+        /***********
+         * HELPERS *
+         ***********/
+        private static void SetSex(bool IsMale)
+        {
+            if (IsMale)
+            {
+                FarmerRendererPatch.eyelashSingleRect = new(5, 10, 2, 1);
+                FarmerRendererPatch.eyelashFullRect = new(5, 10, 6, 1);
+                FarmerRendererPatch.skinShadowSingleRect = new(264, 2, 2, 1);
+                FarmerRendererPatch.skinShadowFullRect = new(264, 2, 6, 1);
+                FarmerRendererPatch.skinBaseSingleRect = new(264, 3, 2, 1);
+                FarmerRendererPatch.skinBaseFullRect = new(264, 3, 6, 1);
+            }
+            else
+            {
+                FarmerRendererPatch.eyelashSingleRect = new(5, 11, 2, 1);
+                FarmerRendererPatch.eyelashFullRect = new(5, 11, 6, 1);
+                FarmerRendererPatch.skinShadowSingleRect = new(264, 3, 2, 1);
+                FarmerRendererPatch.skinShadowFullRect = new(264, 3, 6, 1);
+                FarmerRendererPatch.skinBaseSingleRect = new(264, 2, 2, 1);
+                FarmerRendererPatch.skinBaseFullRect = new(264, 2, 6, 1);
+            }
         }
     }
 }
