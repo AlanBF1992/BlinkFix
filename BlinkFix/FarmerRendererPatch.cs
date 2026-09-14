@@ -24,6 +24,7 @@ namespace BlinkFix
 
         // Sex changes
         internal static readonly Rectangle eyebrowSideRect = new(4, 9, 1, 1);
+
         internal static Rectangle eyelashSingleRect { get; set; }
         internal static Rectangle eyelashFullRect { get; set; }
         internal static Rectangle skinShadowSingleRect { get; set; }
@@ -32,8 +33,9 @@ namespace BlinkFix
         internal static Rectangle skinBaseFullRect { get; set; }
 
         // Mod compats
-        internal static bool IsSoftFarmerLoaded { get; set; } = false;
-        internal static readonly Vector2 softFarmerOffset = new(0, 4);
+        internal static Vector2 LateralOffsets { get; set; } = Vector2.Zero;
+
+
 
         internal static IEnumerable<CodeInstruction> drawTranspiler(IEnumerable<CodeInstruction> instructions)
         {
@@ -118,10 +120,7 @@ namespace BlinkFix
             {
                 if (!lookingDown)
                 {
-                    if (IsSoftFarmerLoaded)
-                    {
-                        eyePosition += softFarmerOffset;
-                    }
+                    eyePosition += LateralOffsets;
 
                     b.Draw(baseTexture, eyePosition, skinBaseSingleRect, color, rotation, origin, scale, effects, layerDepth1);
 
@@ -146,10 +145,7 @@ namespace BlinkFix
 
                 if (!lookingDown)
                 {
-                    if (IsSoftFarmerLoaded)
-                    {
-                        eyePosition += softFarmerOffset;
-                    }
+                    eyePosition += LateralOffsets;
 
                     // Eyelashes
                     b.Draw(baseTexture, eyePosition - eyelidOffset + currentOffset, eyelashSingleRect, color, rotation, origin, scale, effects, layerDepth2);
@@ -201,10 +197,7 @@ namespace BlinkFix
                 {
                     eyePosition.Y -= 4;
 
-                    if (IsSoftFarmerLoaded)
-                    {
-                        eyePosition += softFarmerOffset;
-                    }
+                    eyePosition += LateralOffsets;
 
                     Vector2 lookOffset = lookingLeft ? eyebrowSideRightOffset : eyebrowSideLeftOffset;
 
@@ -247,10 +240,7 @@ namespace BlinkFix
                 {
                     eyePosition.Y -= 4;
 
-                    if (IsSoftFarmerLoaded)
-                    {
-                        eyePosition += softFarmerOffset;
-                    }
+                    eyePosition += LateralOffsets;
 
                     // Eyebrow
                     b.Draw(baseTexture, eyePosition, skinShadowSingleRect, color, rotation, origin, scale, effects, layerDepth1);

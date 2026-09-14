@@ -1,10 +1,16 @@
 {
   "Name": "BlinkFix",
   "Author": "AlanBF",
-  "Version": "1.1.0",
+  "Version": "1.2.0",
   "Description": "Changes the blinking animation and fix the eye color changing when blinking",
   "UniqueID": "AlanBF.EyesFix",
   "EntryDll": "BlinkFix.dll",
   "MinimumApiVersion": "4.1.10",
-  "UpdateKeys": [ "Nexus:32081"]
+  "UpdateKeys": [ "Nexus:32081" ],
+  "Dependencies": [
+    {
+      "UniqueID": "Crisaius.SoftFarmerLoader",
+      "IsRequired": false
+    }
+  ]
 }
