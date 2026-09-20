@@ -1,4 +1,5 @@
-﻿using BlinkFix.Compatibility.SoftFarmer;
+﻿using BlinkFix.Compatibility.FashionSense;
+using BlinkFix.Compatibility.SoftFarmer;
 using HarmonyLib;
 using StardewModdingAPI;
 
@@ -27,6 +28,11 @@ namespace BlinkFix
             if (ModHelper.ModRegistry.IsLoaded("Crisaius.SoftFarmer"))
             {
                 SoftFarmerLoader.Loader(helper, harmony);
+            }
+
+            if (ModHelper.ModRegistry.IsLoaded("PeacefulEnd.FashionSense"))
+            {
+                FashionSenseLoader.Loader(helper, harmony);
             }
         }
     }

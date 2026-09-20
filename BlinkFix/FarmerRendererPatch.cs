@@ -35,8 +35,6 @@ namespace BlinkFix
         // Mod compats
         internal static Vector2 LateralOffsets { get; set; } = Vector2.Zero;
 
-
-
         internal static IEnumerable<CodeInstruction> drawTranspiler(IEnumerable<CodeInstruction> instructions)
         {
             try
@@ -46,8 +44,9 @@ namespace BlinkFix
 
                 CodeMatcher matcher = new(instructions);
 
-                // From: The swimming one
-                // To:   Call a function
+                // From: b.Draw(this.baseTexture, eyePosition, new Rectangle(5, 16, (who.FacingDirection == 2) ? 6 : 2, 2), overrideColor, 0f, origin, scaledPixelZoom, SpriteEffects.None, FarmerRenderer.GetLayerDepth(layerDepth, FarmerSpriteLayers.FaceSkin));
+                //       b.Draw(this.baseTexture, eyePosition, new Rectangle(264 + ((who.FacingDirection == 3) ? 4 : 0), 2 + (who.currentEyes - 1) * 2, (who.FacingDirection == 2) ? 6 : 2, 2), overrideColor, 0f, origin, scaledPixelZoom, SpriteEffects.None, FarmerRenderer.GetLayerDepth(layerDepth, FarmerSpriteLayers.Eyes));
+                // To:   drawSwimming(b, baseTexture, eyePosition, who, overrideColor, rotation, origin, scaledPixelZoom, SpriteEffects.None, FarmerRenderer.GetLayerDepth(layerDepth, FarmerSpriteLayers.FaceSkin), FarmerRenderer.GetLayerDepth(layerDepth, FarmerSpriteLayers.Eyes))
                 matcher
                     .MatchStartForward(
                         new CodeMatch(OpCodes.Ldarg_1),
@@ -56,7 +55,7 @@ namespace BlinkFix
                         new CodeMatch(OpCodes.Ldloc_S),
                         new CodeMatch(OpCodes.Ldc_I4_5)
                     )
-                    .ThrowIfNotMatch("FarmerRendererPatch.drawTranspiler: IL code 1 not found")
+                    .ThrowIfNotMatch("FarmerRendererPatch.DrawPlayerVanillaTranspiler: IL code 1 not found")
                     .Advance(4)
                     .RemoveInstructions(2)
                     .Advance(1)
@@ -77,7 +76,7 @@ namespace BlinkFix
                         new CodeMatch(OpCodes.Ldarg_S),
                         new CodeMatch(OpCodes.Ldarg_S)
                     )
-                    .ThrowIfNotMatch("FarmerRendererPatch.drawTranspiler: IL code 2 not found")
+                    .ThrowIfNotMatch("FarmerRendererPatch.DrawPlayerVanillaTranspiler: IL code 2 not found")
                     .MatchStartForward(
                         new CodeMatch(OpCodes.Ldc_I4_5)
                     )
