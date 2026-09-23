@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json.Linq;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using System.Reflection;
 
 namespace BlinkFix.Compatibility.SoftFarmer
@@ -18,12 +19,12 @@ namespace BlinkFix.Compatibility.SoftFarmer
             helper.Events.Display.MenuChanged += checkConfigOnMenuClosed;
         }
 
-        private static void setOffsets(object? sender, StardewModdingAPI.Events.SaveLoadedEventArgs e)
+        private static void setOffsets(object? sender, SaveLoadedEventArgs e)
         {
             FarmerRendererPatch.LateralOffsets = (isEnabled()) ? new Vector2(0, 4) : new Vector2(0, 0);
         }
 
-        private static void getPackInfo(object? sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
+        private static void getPackInfo(object? sender, GameLaunchedEventArgs e)
         {
             object? SCore = typeof(Mod).Assembly.GetType("StardewModdingAPI.Framework.SCore")!.GetProperty("Instance",
                 BindingFlags.Static | BindingFlags.NonPublic)!.GetValue(null);
@@ -35,7 +36,7 @@ namespace BlinkFix.Compatibility.SoftFarmer
             isEnabled = () => (bool)softFarmerPack.ReadJsonFile<JObject>("config.json")!.GetValue("Enable Soft Farmer Mod")!;
         }
 
-        private static void checkConfigOnMenuClosed(object? sender, StardewModdingAPI.Events.MenuChangedEventArgs e)
+        private static void checkConfigOnMenuClosed(object? sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is not null) return;
             FarmerRendererPatch.LateralOffsets = (isEnabled()) ? new Vector2(0, 4) : Vector2.Zero;

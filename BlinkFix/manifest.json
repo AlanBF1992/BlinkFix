@@ -11,6 +11,10 @@
     {
       "UniqueID": "Crisaius.SoftFarmerLoader",
       "IsRequired": false
+    },
+    {
+      "UniqueID": "PeacefulEnd.FashionSense",
+      "IsRequired": false
     }
   ]
 }
