@@ -32,17 +32,16 @@ namespace BlinkFix
         /**********
          * EVENTS *
          **********/
-        private static void assignFarmerSex(object? sender, SaveLoadedEventArgs e)
+        internal static void assignFarmerSex(object? sender, SaveLoadedEventArgs e)
         {
             SetSex(Game1.player.IsMale);
         }
 
-        private static void reassignFarmerSex(object? sender, MenuChangedEventArgs e)
+        internal static void reassignFarmerSex(object? sender, MenuChangedEventArgs e)
         {
-            if (e.OldMenu is CharacterCustomization)
-            {
-                SetSex(Game1.player.IsMale);
-            }
+            if (e.OldMenu is not CharacterCustomization) return;
+
+            SetSex(Game1.player.IsMale);
         }
 
         /***********
@@ -55,22 +54,26 @@ namespace BlinkFix
             if (IsMale)
             {
                 FarmerRendererPatch.eyebrowSideRect = new(4, 9, 1, 1);
-                FarmerRendererPatch.eyelashSingleRect = new(5, 10, 2, 1);
+
                 FarmerRendererPatch.eyelashFullRect = new(5, 10, 6, 1);
-                FarmerRendererPatch.skinShadowSingleRect = new(264, 2, 2, 1);
                 FarmerRendererPatch.skinShadowFullRect = new(264, 2, 6, 1);
-                FarmerRendererPatch.skinBaseSingleRect = new(264, 3, 2, 1);
                 FarmerRendererPatch.skinBaseFullRect = new(264, 3, 6, 1);
+
+                FarmerRendererPatch.eyelashSingleRect = new(5, 10, 2, 1);
+                FarmerRendererPatch.skinShadowSingleRect = new(264, 2, 2, 1);
+                FarmerRendererPatch.skinBaseSingleRect = new(264, 3, 2, 1);
             }
             else
             {
                 FarmerRendererPatch.eyebrowSideRect = new(4, 9, 1, 1);
-                FarmerRendererPatch.eyelashSingleRect = new(5, 11, 2, 1);
+
                 FarmerRendererPatch.eyelashFullRect = new(5, 11, 6, 1);
-                FarmerRendererPatch.skinShadowSingleRect = new(264, 3, 2, 1);
                 FarmerRendererPatch.skinShadowFullRect = new(264, 3, 6, 1);
-                FarmerRendererPatch.skinBaseSingleRect = new(264, 2, 2, 1);
                 FarmerRendererPatch.skinBaseFullRect = new(264, 2, 6, 1);
+
+                FarmerRendererPatch.eyelashSingleRect = new(5, 11, 2, 1);
+                FarmerRendererPatch.skinShadowSingleRect = new(264, 3, 2, 1);
+                FarmerRendererPatch.skinBaseSingleRect = new(264, 2, 2, 1);
             }
         }
     }

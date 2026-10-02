@@ -124,8 +124,7 @@ namespace BlinkFix
             {
                 if (!lookingDown)
                 {
-                    eyePosition += VerticalOffset;
-                    eyePosition += lookingLeft ? LookLeftOffset : LookRightOffset;
+                    eyePosition += VerticalOffset + (lookingLeft ? LookLeftOffset : LookRightOffset);
 
                     b.Draw(baseTexture, eyePosition, skinBaseSingleRect, color, rotation, origin, scale, effects, layerDepth1);
 
@@ -150,8 +149,7 @@ namespace BlinkFix
 
                 if (!lookingDown)
                 {
-                    eyePosition += VerticalOffset;
-                    eyePosition += lookingLeft ? LookLeftOffset : LookRightOffset;
+                    eyePosition += VerticalOffset + (lookingLeft ? LookLeftOffset : LookRightOffset);
 
                     // Eyelashes
                     b.Draw(baseTexture, eyePosition - eyelidOffset + currentOffset, eyelashSingleRect, color, rotation, origin, scale, effects, layerDepth2);
@@ -203,9 +201,7 @@ namespace BlinkFix
                 {
                     eyePosition.Y -= 4;
 
-                    eyePosition += VerticalOffset;
-                    eyePosition += lookingLeft? LookLeftOffset : LookRightOffset;
-
+                    eyePosition += VerticalOffset + (lookingLeft? LookLeftOffset : LookRightOffset);
 
                     Vector2 eyebrowOffset = lookingLeft ? eyebrowSideRightOffset : eyebrowSideLeftOffset;
 
@@ -248,8 +244,7 @@ namespace BlinkFix
                 {
                     eyePosition.Y -= 4;
 
-                    eyePosition += VerticalOffset;
-                    eyePosition += lookingLeft ? LookLeftOffset : LookRightOffset;
+                    eyePosition += VerticalOffset + (lookingLeft ? LookLeftOffset : LookRightOffset);
 
                     // Eyebrow
                     b.Draw(baseTexture, eyePosition, skinShadowSingleRect, color, rotation, origin, scale, effects, layerDepth1);
