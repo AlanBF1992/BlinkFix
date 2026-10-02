@@ -50,10 +50,11 @@ namespace BlinkFix
          ***********/
         /// <summary>Applies the farmer sex-specific sprite-sheet rects.</summary>
         /// <param name="IsMale">Whether the farmer is male.</param>
-        private static void SetSex(bool IsMale)
+        internal static void SetSex(bool IsMale)
         {
             if (IsMale)
             {
+                FarmerRendererPatch.eyebrowSideRect = new(4, 9, 1, 1);
                 FarmerRendererPatch.eyelashSingleRect = new(5, 10, 2, 1);
                 FarmerRendererPatch.eyelashFullRect = new(5, 10, 6, 1);
                 FarmerRendererPatch.skinShadowSingleRect = new(264, 2, 2, 1);
@@ -63,6 +64,7 @@ namespace BlinkFix
             }
             else
             {
+                FarmerRendererPatch.eyebrowSideRect = new(4, 9, 1, 1);
                 FarmerRendererPatch.eyelashSingleRect = new(5, 11, 2, 1);
                 FarmerRendererPatch.eyelashFullRect = new(5, 11, 6, 1);
                 FarmerRendererPatch.skinShadowSingleRect = new(264, 3, 2, 1);
